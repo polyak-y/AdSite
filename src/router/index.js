@@ -8,11 +8,11 @@ import Orders from '@/components/Orders';
 import Login from '@/components/Auth/Login';
 import Registration from '@/components/Auth/Registration';
 import Page404 from '@/components/Page404';
-import AuthGuard from './auth-guard';
+import firebase from 'firebase/app';
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+const router =  new VueRouter({
   mode: 'history',
   routes: [
     {
@@ -30,19 +30,19 @@ export default new VueRouter({
       path: '/list',
       name: 'AdList',
       component: AdList,
-      beforeEnter: AuthGuard
+      meta: {auth: true},
     },
     {
       path: '/new',
       name: 'NewAd',
+      meta: {auth: true},
       component: NewAd,
-      beforeEnter: AuthGuard
     },
     {
       path: '/orders',
       name: 'Orders',
+      meta: {auth: true},
       component: Orders,
-      beforeEnter: AuthGuard
     },
     {
       path: '/login',
@@ -58,5 +58,21 @@ export default new VueRouter({
       path: '*', //страница 404.
       component: Page404
     }
-  ]   
+  ]    
 });
+
+router.beforeEach((to, from, next) => {
+
+  firebase.auth().onAuthStateChanged(() => {
+    const currentUser = firebase.auth().currentUser;
+    const requireAuth = to.matched.some(record => record.meta.auth)
+
+    if(requireAuth && !currentUser) {
+      next('/login');
+    } else {
+      next()
+    }
+  })    
+})
+
+export default router;

@@ -5,7 +5,7 @@
         app 
         temporary
         v-model="drawer"
-      >
+      > 
         <v-list>
           <v-list-item 
             :to="link.url" 
@@ -64,7 +64,13 @@
       </v-app-bar>
 
       <v-content>    
+        <transition 
+          name="animateRouter"
+          mode="out-in"
+          appear
+        >
           <router-view></router-view>
+        </transition>          
       </v-content>
 
       <v-snackbar
@@ -154,6 +160,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+  .animateRouter-enter,
+  .animateRouter-leave-to {
+    opacity: 0;
+  }
+
+  .animateRouter-enter-active,
+  .animateRouter-leave-active {
+    transition: opacity .5s;
+  }
   
   .myButton {
     padding-left: 20px!important;
