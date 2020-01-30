@@ -19,8 +19,11 @@ export default {
   mutations: {
     loadOrders (state, payload) {
       state.orders = payload;
+    },
+    clearOrders(state) {
+      state.orders = []
     }
-  },
+  }, 
   actions: {
     async createOrder ({ commit }, payload) {
       commit('clearError')
@@ -39,8 +42,8 @@ export default {
       }
     },
     async fetchOrders ({ commit, getters }) {
-
       commit('clearError');
+      commit('clearOrders')
 
       try {
         const fbFetch = await firebase.database().ref(`/users/${getters.user.id}/orders`).once('value');
@@ -52,7 +55,7 @@ export default {
 
         commit('loadOrders', resultOrders);
       } catch(err) {
-        commit('setError', err.message);
+        console.log(err);
       }
     },
     async markOrderDone ({ commit, getters}, payload) {
